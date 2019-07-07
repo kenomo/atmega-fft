@@ -1,18 +1,14 @@
 
-
 DISPLAY_ROUTINE:
+	cli
 
 	lds rROW_COUNTER, LED_ROW_COUNTER ; load LED_ROW_COUNTER
 	
 	; change the row
-	ror rROW_COUNTER ; shift right
-
-	; check if rROW_COUNTER is 0x00 
-	cpi rROW_COUNTER, 0x00 ; compare immediate
-	brne DISPLAY_ROUTINE_ROW_COUNTER_IS_NON_ZERO ; if LED_ROW_COUNTER is non zero continue
-	ldi rROW_COUNTER, (1<<7) ; otherwise load 0b10000...
-DISPLAY_ROUTINE_ROW_COUNTER_IS_NON_ZERO:
-
+	mov rTEMP, rROW_COUNTER
+	ror rTEMP ; shift right into carry flag
+	ror rROW_COUNTER
+	
 	; write back row counter to SRAM
 	sts LED_ROW_COUNTER, rROW_COUNTER
 	
@@ -52,7 +48,10 @@ DISPLAY_ROUTINE_ROW_COUNTER_IS_NON_ZERO:
 
 	SHIFT_REGISTER_WRITE
 
-	ret
+
+	sei
+	reti
+
 
 DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT:
 	
@@ -63,6 +62,7 @@ DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT:
 	brne DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT ; if rROW_COUNTER not equal to 0x00 jump to ...
 		
 	ret
+
 
 DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER:
 	
@@ -78,6 +78,7 @@ DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER:
 	brne DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER ; if rCOLUMN_COUNTER not equal to 0x00 jump to ...
 
 	ret
+
 
 DISPLAY_ROUTINE_FILL_DEBUG:
 
@@ -147,6 +148,7 @@ DISPLAY_ROUTINE_FILL_DEBUG:
 	std Z + 63, rTEMP
 
 	ret
+
 
 DISPLAY_ROUTINE_FILL_DISPLAY:
 

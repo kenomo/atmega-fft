@@ -21,6 +21,8 @@ RESET:
 ;------------------------------------------------------
 ; ...
 
+.org OVF0addr
+	jmp DISPLAY_ROUTINE ; timer overflow display routine
 
 .org INT_VECTORS_SIZE ; end address of 
 
@@ -72,22 +74,38 @@ INIT:
 	out PortD, rTEMP
 	
 	
+	; set 8bit timer
+	; set clock select bit (see p. 107)
+	ldi rTEMP, (1<<CS01)
+	out TCCR0B, rTEMP
+
+	; set interrupt
+	ldi rTEMP, (1<<TOIE0) ; TOIE0: interrupt at timer overflow
+	sts TIMSK0, rTEMP
+
+	
 	; SPI initialize
 	rcall SPI_MASTER_INIT
 	
 
-	//// for testing purpose
-	ldi rROW_COUNTER, 0b00000000
+	; initialize row counter
+	ldi rROW_COUNTER, 0b0000001
 	sts LED_ROW_COUNTER, rROW_COUNTER
 
+	; for testing
 	rcall DISPLAY_ROUTINE_FILL_DEBUG
-	rcall DISPLAY_ROUTINE
+	
 	////
+
+	; activate interrupts
+	sei
 
 ;------------------------------------------------------
 ; Program
 ;------------------------------------------------------
 Program:
+
+	;rcall DISPLAY_ROUTINE
 
 	rjmp Program
 

@@ -16,8 +16,6 @@
 .def Z_POINTER_LOW = r30
 .def Z_POINTER_HIGH = r31
 
-/*  */
-
 
 /* */
 .equ LED_ARRAY_SIZE = 128
