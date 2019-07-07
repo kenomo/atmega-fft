@@ -77,7 +77,7 @@ INIT:
 	
 
 	//// for testing purpose
-	;ldi rROW_COUNTER, (1<<1)
+	ldi rROW_COUNTER, 0b00000000
 	sts LED_ROW_COUNTER, rROW_COUNTER
 
 	rcall DISPLAY_ROUTINE_FILL_DEBUG

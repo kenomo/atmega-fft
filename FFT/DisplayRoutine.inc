@@ -5,14 +5,14 @@ DISPLAY_ROUTINE:
 	lds rROW_COUNTER, LED_ROW_COUNTER ; load LED_ROW_COUNTER
 	
 	; change the row
-	;lsl rROW_COUNTER ; shift left
+	ror rROW_COUNTER ; shift right
 
-	; if rROW_COUNTER is 0x00 set to 0x01
+	; check if rROW_COUNTER is 0x00 
 	cpi rROW_COUNTER, 0x00 ; compare immediate
 	brne DISPLAY_ROUTINE_ROW_COUNTER_IS_NON_ZERO ; if LED_ROW_COUNTER is non zero continue
-	ldi rROW_COUNTER, 0x80 ; otherwise load 0b000...01
+	ldi rROW_COUNTER, (1<<7) ; otherwise load 0b10000...
 DISPLAY_ROUTINE_ROW_COUNTER_IS_NON_ZERO:
-	
+
 	; write back row counter to SRAM
 	sts LED_ROW_COUNTER, rROW_COUNTER
 	
