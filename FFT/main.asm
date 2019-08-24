@@ -105,7 +105,7 @@ INIT:
 ;------------------------------------------------------
 Program:
 
-	;rcall DISPLAY_ROUTINE
+	
 
 	rjmp Program
 
