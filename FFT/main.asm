@@ -3,11 +3,12 @@
 .include "Macros.inc"
 .include "Definitions.inc"
 
+.include "sin_cos.inc"
 
 ; indicates that the next segment refers to program memory
 .cseg
 ; the org directive is used to specify a location in program memory where the program following directive is to be placed.
-.org 0
+.org 0x00
 
 ;------------------------------------------------------
 ; start address 0000
@@ -52,7 +53,7 @@ INIT:
 	out SPL, rTEMPA
 
 	; reserve some SRAM
-	.dseg
+	.dseg ; data segment
 		
 		sLED_ARRAY: .byte LED_ARRAY_SIZE
 		sLED_PROGRAM: .byte 1
@@ -60,7 +61,7 @@ INIT:
 		sLED_Z_POINTER_LOW: .byte 1
 		sLED_Z_POINTER_HIGH: .byte 1
 
-	.cseg
+	.cseg ; program memory segment
 
 
 	;------------------------------------------------------
@@ -138,8 +139,8 @@ INIT:
 ;------------------------------------------------------
 ; Program
 ;------------------------------------------------------
+	
 Program:
-
 	
 
 	rjmp Program
@@ -150,4 +151,3 @@ Program:
 End:
 
 	rjmp End
-

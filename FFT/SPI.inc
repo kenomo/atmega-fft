@@ -10,7 +10,6 @@ SPI_MASTER_INIT:
 
 	ret
 
-
 /* Wait for message transmitted */
 SPI_WAIT_FOR_TRANSMIT:
 	in rTEMPA, SPSR

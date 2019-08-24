@@ -40,10 +40,12 @@
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.ispmk2</avrtool>
-    <avrtoolserialnumber>000200039896</avrtoolserialnumber>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtoolserialnumber>
+    </avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1E9705</avrdeviceexpectedsignature>
-    <avrtoolinterface>ISP</avrtoolinterface>
+    <avrtoolinterface>
+    </avrtoolinterface>
     <avrtoolinterfaceclock>125000</avrtoolinterfaceclock>
     <com_atmel_avrdbg_tool_ispmk2>
       <ToolOptions>
@@ -60,7 +62,8 @@
       <ToolOptions>
         <InterfaceProperties>
         </InterfaceProperties>
-        <InterfaceName>ISP</InterfaceName>
+        <InterfaceName>
+        </InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
       <ToolNumber>
@@ -108,6 +111,9 @@
     <Compile Include="SPI.inc">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="sin_cos.inc">
+      <SubType>Code</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Assembler.targets" />
 </Project>

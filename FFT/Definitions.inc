@@ -1,7 +1,9 @@
 #ifndef _DEFINITIONS_INC_
 #define _DEFINITIONS_INC_
 
-
+;------------------------------------------------------
+; tmp register label
+;------------------------------------------------------
 .def rTEMPA = r16
 .def rTEMPB = r17
 .def rCOUNTER = r18
@@ -12,13 +14,6 @@
 .def rDR_COLUMN_COUNTER = r21
 
 
-;------------------------------------------------------
-; reserved
-;------------------------------------------------------
-
-; reserved for z pointer arithmetic
-.def Z_POINTER_LOW = r30
-.def Z_POINTER_HIGH = r31
 
 
 ;------------------------------------------------------

@@ -25,8 +25,8 @@ DISPLAY_ROUTINE:
 	
 	
 	; set z pointer to last entry of LED_ARRAY
-	ldi Z_POINTER_LOW, low(sLED_ARRAY + LED_ARRAY_SIZE)
-    ldi Z_POINTER_HIGH, high(sLED_ARRAY + LED_ARRAY_SIZE)
+	ldi ZL, low(sLED_ARRAY + LED_ARRAY_SIZE)
+    ldi ZH, high(sLED_ARRAY + LED_ARRAY_SIZE)
 
 	; shift z pointer to the row defined as a bit in rDR_ROW_COUNTER: 0b00000100 -> third row
 	call DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT
@@ -86,7 +86,7 @@ DISPLAY_ROUTINE_ROWS: ; write rows
 	rjmp DISPLAY_ROUTINE_END
 
 
-DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER: ; write the shift register
+DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER: ; shift register
 	SHIFT_REGISTER_WRITE
 
 	; set display routine program position
@@ -104,7 +104,7 @@ DISPLAY_ROUTINE_END:
 DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT:
 	
 	lsl rDR_ROW_COUNTER ; shift left
-	sbiw Z_POINTER_HIGH:Z_POINTER_LOW, 1 ; decrease z-pointer by one
+	sbiw ZH:ZL, 1 ; decrease z-pointer by one
 
 	cpi rDR_ROW_COUNTER, 0x00 ; compare immediate
 	brne DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT ; if rDR_ROW_COUNTER not equal to 0x00 jump to ...
@@ -119,7 +119,7 @@ DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER:
 	sbrc rTEMPA, 0 ; skip next line if bit 0 in rTEMPA is clear -> LED off
 	eor rSPI_BUFFER, rDR_COLUMN_COUNTER
 
-	sbiw Z_POINTER_HIGH:Z_POINTER_LOW, 8 ; decrease z pointer by 8 bytes
+	sbiw ZH:ZL, 8 ; decrease z pointer by 8 bytes
 
 	lsl rDR_COLUMN_COUNTER ; shift left
 	cpi rDR_COLUMN_COUNTER, 0x00 ; compare immediate
@@ -131,15 +131,15 @@ DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER:
 DISPLAY_ROUTINE_FILL_DEBUG:
 
 	; set z pointer to last entry of sLED_ARRAY
-	ldi Z_POINTER_LOW, low(sLED_ARRAY + LED_ARRAY_SIZE)
-    ldi Z_POINTER_HIGH, high(sLED_ARRAY + LED_ARRAY_SIZE)
+	ldi ZL, low(sLED_ARRAY + LED_ARRAY_SIZE)
+    ldi ZH, high(sLED_ARRAY + LED_ARRAY_SIZE)
 
 	ldi rCOUNTER, 128
 	rcall DISPLAY_ROUTINE_FILL_DISPLAY
 
 	; set z pointer to first entry of sLED_ARRAY
-	ldi Z_POINTER_LOW, low(sLED_ARRAY)
-    ldi Z_POINTER_HIGH, high(sLED_ARRAY)
+	ldi ZL, low(sLED_ARRAY)
+    ldi ZH, high(sLED_ARRAY)
 
 	ldi rTEMPA, 0x00
 	std Z + 0, rTEMPA
@@ -167,7 +167,7 @@ DISPLAY_ROUTINE_FILL_DEBUG:
 	std Z + 62, rTEMPA
 	std Z + 63, rTEMPA
 
-	adiw Z_POINTER_HIGH:Z_POINTER_LOW, 63
+	adiw ZH:ZL, 63
 
 	ldi rTEMPA, 0x00
 	std Z + 0, rTEMPA
