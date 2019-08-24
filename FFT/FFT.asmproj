@@ -82,6 +82,7 @@
         <avrasm.assembler.general.IncludeFile>m1284pdef.inc</avrasm.assembler.general.IncludeFile>
       </AvrAssembler>
     </ToolchainSettings>
+    <OutputType>Executable</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -111,9 +112,12 @@
     <Compile Include="SPI.inc">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="sin_cos.inc">
+    <Compile Include="sqrt.inc">
       <SubType>Code</SubType>
-    </None>
+    </Compile>
+    <Compile Include="sin_cos.inc">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Assembler.targets" />
 </Project>

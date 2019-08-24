@@ -4,6 +4,7 @@
 .include "Definitions.inc"
 
 .include "sin_cos.inc"
+.include "sqrt.inc"
 
 ; indicates that the next segment refers to program memory
 .cseg
@@ -20,7 +21,6 @@ RESET:
 ;------------------------------------------------------
 ; interrupts definitions
 ;------------------------------------------------------
-; ...
 
 .org OVF0addr ; Timer/Counter0 Overflow interrupt address
 	jmp DISPLAY_ROUTINE
@@ -37,6 +37,7 @@ RESET:
 .include "SPI.inc"
 .include "DisplayRoutine.inc"
 
+
 ;------------------------------------------------------
 ; initialize
 ;------------------------------------------------------
@@ -52,6 +53,10 @@ INIT:
 	ldi rTEMPA, low(RAMEND)
 	out SPL, rTEMPA
 
+
+	;------------------------------------------------------
+	; data segment
+	;------------------------------------------------------
 	; reserve some SRAM
 	.dseg ; data segment
 		
@@ -105,14 +110,12 @@ INIT:
 	sts TIMSK0, rTEMPA ; Timer/Counter 0 Interrupt Mask Register
 
 
-
 	;------------------------------------------------------
 	; spi
 	;------------------------------------------------------
 	; SPI initialize
 	rcall SPI_MASTER_INIT
 	
-
 
 	;------------------------------------------------------
 	; display routine
@@ -128,16 +131,15 @@ INIT:
 	; for testing
 	rcall DISPLAY_ROUTINE_FILL_DEBUG
 	
-
-
 	
 	;------------------------------------------------------
-	; interrupt
+	; misc
 	;------------------------------------------------------
 	sei ; global interrupt enable
 
+
 ;------------------------------------------------------
-; Program
+; program
 ;------------------------------------------------------
 	
 Program:
@@ -146,7 +148,7 @@ Program:
 	rjmp Program
 
 ;------------------------------------------------------
-; End
+; end
 ;------------------------------------------------------
 End:
 
