@@ -4,16 +4,17 @@ SPI_MASTER_INIT:
 	; MSTR: set as master
 	; SPI2X: fosc/2
 	; SPE: SPI enable
-	ldi rTEMP, (1<<SPE)|(1<<MSTR)|(1<<SPI2X)
-	out SPCR, rTEMP
+	; SPIE: SPI Interrupt Enable
+	ldi rTEMPA, (1<<SPE)|(1<<MSTR)|(1<<SPI2X)|(1<<SPIE)
+	out SPCR, rTEMPA
 
 	ret
 
 
 /* Wait for message transmitted */
 SPI_WAIT_FOR_TRANSMIT:
-	in rTEMP, SPSR
-	sbrs rTEMP, SPIF
+	in rTEMPA, SPSR
+	sbrs rTEMPA, SPIF
 		rjmp SPI_WAIT_FOR_TRANSMIT
 
 	ret

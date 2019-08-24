@@ -7,7 +7,7 @@
 ; indicates that the next segment refers to program memory
 .cseg
 ; the org directive is used to specify a location in program memory where the program following directive is to be placed.
-.org 0 ; 
+.org 0
 
 ;------------------------------------------------------
 ; start address 0000
@@ -21,8 +21,11 @@ RESET:
 ;------------------------------------------------------
 ; ...
 
-.org OVF0addr
-	jmp DISPLAY_ROUTINE ; timer overflow display routine
+.org OVF0addr ; Timer/Counter0 Overflow interrupt address
+	jmp DISPLAY_ROUTINE
+
+.org SPIaddr ; SPI Serial Transfer Complete interrupt address
+	jmp DISPLAY_ROUTINE
 
 .org INT_VECTORS_SIZE ; end address of 
 
@@ -37,18 +40,32 @@ RESET:
 ; initialize
 ;------------------------------------------------------
 INIT:
+
+
+	;------------------------------------------------------
+	; stack
+	;------------------------------------------------------
 	; set Stack Pointer
-	ldi rTEMP, high(RAMEND)
-	out SPH, rTEMP
-	ldi rTEMP, low(RAMEND)
-	out SPL, rTEMP
+	ldi rTEMPA, high(RAMEND)
+	out SPH, rTEMPA
+	ldi rTEMPA, low(RAMEND)
+	out SPL, rTEMPA
 
 	; reserve some SRAM
 	.dseg
-	LED_ARRAY: .byte 128
-	LED_ROW_COUNTER: .byte 1
+		
+		sLED_ARRAY: .byte LED_ARRAY_SIZE
+		sLED_PROGRAM: .byte 1
+		sLED_ROW_COUNTER: .byte 1
+		sLED_Z_POINTER_LOW: .byte 1
+		sLED_Z_POINTER_HIGH: .byte 1
+
 	.cseg
 
+
+	;------------------------------------------------------
+	; IO
+	;------------------------------------------------------
 	/*
 	 * PB5: MOSI
 	 * PB6: MISO
@@ -63,42 +80,60 @@ INIT:
 	 */
 
 	; set PBx and PDx as out
-	ldi rTEMP, 0xFF
-	out DDRB, rTEMP
-	out DDRD, rTEMP
+	ldi rTEMPA, 0xFF
+	out DDRB, rTEMPA
+	out DDRD, rTEMPA
 	
 	; set PortB low, set PortD low (except for MR)
-	ldi rTEMP, 0x00
-	out PortB, rTEMP
-	ldi rTEMP, (1<<4)
-	out PortD, rTEMP
+	ldi rTEMPA, 0x00
+	out PortB, rTEMPA
+	ldi rTEMPA, (1<<4)
+	out PortD, rTEMPA
 	
+
+	;------------------------------------------------------
+	; interrupt
+	;------------------------------------------------------
 	
-	; set 8bit timer
-	; set clock select bit (see p. 107)
-	ldi rTEMP, (1<<CS01)
-	out TCCR0B, rTEMP
+	; set 8bit timer/counter 0
+	ldi rTEMPA, (1<<CS01) ; set clock select bit (see p. 107)
+	out TCCR0B, rTEMPA ; Timer/Counter 0 Control Register B
 
 	; set interrupt
-	ldi rTEMP, (1<<TOIE0) ; TOIE0: interrupt at timer overflow
-	sts TIMSK0, rTEMP
+	ldi rTEMPA, (1<<TOIE0) ; TOIE0: interrupt at timer overflow
+	sts TIMSK0, rTEMPA ; Timer/Counter 0 Interrupt Mask Register
 
-	
+
+
+	;------------------------------------------------------
+	; spi
+	;------------------------------------------------------
 	; SPI initialize
 	rcall SPI_MASTER_INIT
 	
 
+
+	;------------------------------------------------------
+	; display routine
+	;------------------------------------------------------
 	; initialize row counter
-	ldi rROW_COUNTER, 0b0000001
-	sts LED_ROW_COUNTER, rROW_COUNTER
+	ldi rDR_ROW_COUNTER, 0b0000001
+	sts sLED_ROW_COUNTER, rDR_ROW_COUNTER
+	
+	; initialize display routine position
+	ldi rTEMPA, 0b0
+	sts sLED_PROGRAM, rTEMPA
 
 	; for testing
 	rcall DISPLAY_ROUTINE_FILL_DEBUG
 	
-	////
 
-	; activate interrupts
-	sei
+
+	
+	;------------------------------------------------------
+	; interrupt
+	;------------------------------------------------------
+	sei ; global interrupt enable
 
 ;------------------------------------------------------
 ; Program
