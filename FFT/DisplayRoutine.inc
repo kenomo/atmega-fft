@@ -2,6 +2,8 @@
 
 DISPLAY_ROUTINE:
 	cli ; global interrupt disable
+
+	DISPLAY_ROUTINE_PUSH_ON_STACK
 	
 	; jump to program position of display routine
 	lds rTEMPA, sLED_PROGRAM
@@ -95,6 +97,8 @@ DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER: ; shift register
 
 
 DISPLAY_ROUTINE_END:
+	DISPLAY_ROUTINE_POP_FROM_STACK
+
 	sei ; global interrupt enable
 	reti ; return from interrupt
 
