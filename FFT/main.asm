@@ -3,11 +3,10 @@
 ; indicates that the next segment refers to program memory
 .cseg
 
-.include "Macros.inc"
 .include "Definitions.inc"
 
-;.include "sin_cos.inc"
-;.include "sqrt.inc"
+.include "sin_cos.inc"
+.include "sqrt.inc"
 
 ; the org directive is used to specify a location in program memory where the program following directive is to be placed.
 .org 0x00
@@ -35,9 +34,14 @@ RESET:
 ;------------------------------------------------------
 ; includes
 ;------------------------------------------------------
-.include "SPI.inc"
-.include "DisplayRoutine.inc"
+.include "Macros.inc"
 .include "Arithmetic.inc"
+
+.include "SPI.inc"
+.include "Debug.inc"
+
+.include "FFT.inc"
+.include "DisplayRoutine.inc"
 
 
 ;------------------------------------------------------
@@ -64,9 +68,19 @@ INIT:
 		
 		sLED_ARRAY: .byte LED_ARRAY_SIZE
 		sLED_PROGRAM: .byte 1
-		sLED_ROW_COUNTER: .byte 1
 		sLED_Z_POINTER_LOW: .byte 1
 		sLED_Z_POINTER_HIGH: .byte 1
+		sLED_ROW_COUNTER: .byte 1
+
+		sFFT_POINTS: .byte FFT_POINT_SIZE
+		sFFT_ODD_L: .byte 1
+		sFFT_ODD_H: .byte 1
+		sFFT_EVEN_L: .byte 1
+		sFFT_EVEN_H: .byte 1
+
+		sFFT_RES: .byte 16
+		sFFT_RES_ZL: .byte 1
+		sFFT_RES_ZH: .byte 1
 
 	.cseg ; program memory segment
 
@@ -132,14 +146,16 @@ INIT:
 	; initialize display routine position
 	ldi rTEMPA, 0b0
 	sts sLED_PROGRAM, rTEMPA
-
-	; for testing
-	rcall DISPLAY_ROUTINE_FILL_DEBUG
 	
 	
 	;------------------------------------------------------
 	; misc
 	;------------------------------------------------------
+	
+	; for testing
+	rcall DISPLAY_ROUTINE_FILL_DEBUG
+	rcall FFT_FILL_SRAM
+	
 	sei ; global interrupt enable
 
 
@@ -149,14 +165,7 @@ INIT:
 	
 Program:
 	
-	/*
-	ldi rA16L, 0x12
-	ldi rA16H, 0x23
-	ldi rB16L, 0x34
-	ldi rB16H, 0x45
-
-	ADD16B rA16L, rA16H, rB16L, rB16H
-	*/
+	rcall FFT
 
 	rjmp Program
 

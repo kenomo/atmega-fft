@@ -97,7 +97,16 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Arithmetic.inc">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Debug.inc">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Definitions.inc">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FFT.inc">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Macros.inc">
