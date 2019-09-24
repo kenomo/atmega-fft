@@ -1,7 +1,17 @@
 
+DISPLAY_ROUTINE_TIMER:
+	cli ; global interrupt disable
+
+	ldi rTEMPA, 0x00
+	out TCNT0, rTEMPA ; clear timer compare register
+
 
 DISPLAY_ROUTINE:
 	cli ; global interrupt disable
+
+	; for debug purpose
+	ldi rTEMPA, (1<<7)
+	out PortC, rTEMPA
 
 	DISPLAY_ROUTINE_PUSH_ON_STACK
 	
@@ -98,6 +108,9 @@ DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER: ; shift register
 
 DISPLAY_ROUTINE_END:
 	DISPLAY_ROUTINE_POP_FROM_STACK
+
+	ldi rTEMPA, 0x00
+	out PortC, rTEMPA
 
 	sei ; global interrupt enable
 	reti ; return from interrupt

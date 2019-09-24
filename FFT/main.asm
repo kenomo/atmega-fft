@@ -1,13 +1,14 @@
 ; FFT
 
+; indicates that the next segment refers to program memory
+.cseg
+
 .include "Macros.inc"
 .include "Definitions.inc"
 
-.include "sin_cos.inc"
-.include "sqrt.inc"
+;.include "sin_cos.inc"
+;.include "sqrt.inc"
 
-; indicates that the next segment refers to program memory
-.cseg
 ; the org directive is used to specify a location in program memory where the program following directive is to be placed.
 .org 0x00
 
@@ -22,8 +23,8 @@ RESET:
 ; interrupts definitions
 ;------------------------------------------------------
 
-.org OVF0addr ; Timer/Counter0 Overflow interrupt address
-	jmp DISPLAY_ROUTINE
+.org OC0Aaddr ; Timer/Counter0 Compare Match A
+	jmp DISPLAY_ROUTINE_TIMER
 
 .org SPIaddr ; SPI Serial Transfer Complete interrupt address
 	jmp DISPLAY_ROUTINE
@@ -36,6 +37,7 @@ RESET:
 ;------------------------------------------------------
 .include "SPI.inc"
 .include "DisplayRoutine.inc"
+.include "Arithmetic.inc"
 
 
 ;------------------------------------------------------
@@ -85,10 +87,11 @@ INIT:
 	 * 
 	 */
 
-	; set PBx and PDx as out
+	; set PBx, PDx, PCx as out
 	ldi rTEMPA, 0xFF
 	out DDRB, rTEMPA
 	out DDRD, rTEMPA
+	out DDRC, rTEMPA
 	
 	; set PortB low, set PortD low (except for MR)
 	ldi rTEMPA, 0x00
@@ -102,11 +105,13 @@ INIT:
 	;------------------------------------------------------
 	
 	; set 8bit timer/counter 0
-	ldi rTEMPA, (1<<CS01) ; set clock select bit (see p. 107)
+	ldi rTEMPA, (1<<CS01)|(1<<CS00) ; set clock select bit (see p. 107), clk / 64
 	out TCCR0B, rTEMPA ; Timer/Counter 0 Control Register B
+	ldi rTEMPA, 80 
+	out OCR0A, rTEMPA ; Output Compare Register A
 
 	; set interrupt
-	ldi rTEMPA, (1<<TOIE0) ; TOIE0: interrupt at timer overflow
+	ldi rTEMPA, (1<<OCIE0A) ; OCIE0A: Timer/Counter0 Output Compare Match A Interrupt Enable
 	sts TIMSK0, rTEMPA ; Timer/Counter 0 Interrupt Mask Register
 
 
@@ -144,6 +149,14 @@ INIT:
 	
 Program:
 	
+	/*
+	ldi rA16L, 0x12
+	ldi rA16H, 0x23
+	ldi rB16L, 0x34
+	ldi rB16H, 0x45
+
+	ADD16B rA16L, rA16H, rB16L, rB16H
+	*/
 
 	rjmp Program
 
