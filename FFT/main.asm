@@ -72,15 +72,16 @@ INIT:
 		sLED_Z_POINTER_HIGH: .byte 1
 		sLED_ROW_COUNTER: .byte 1
 
+		.org 0x0240
 		sFFT_POINTS: .byte FFT_POINT_SIZE
-		sFFT_ODD_L: .byte 1
-		sFFT_ODD_H: .byte 1
-		sFFT_EVEN_L: .byte 1
-		sFFT_EVEN_H: .byte 1
+		
+		.org 0x0400
+		sEVENR: .byte 2
+		sEVENI: .byte 2
+		sODDR: .byte 2
+		sODDI: .byte 2
 
 		sFFT_RES: .byte 16
-		sFFT_RES_ZL: .byte 1
-		sFFT_RES_ZH: .byte 1
 
 	.cseg ; program memory segment
 

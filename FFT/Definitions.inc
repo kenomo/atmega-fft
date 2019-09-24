@@ -22,6 +22,12 @@
 .def rEXPR = r4
 .def rEXPI = r5
 
+.def pEVENL = r26
+.def pEVENH = r27
+.def pODDL = r28
+.def pODDH = r29
+
+
 ; arithmetic
 ; out
 .def ra16L = r12
