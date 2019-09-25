@@ -19,8 +19,13 @@
 .def rBIN_COUNTER = r18
 .def rM_COUNTER = r19
 
-.def rEXPR = r4
-.def rEXPI = r5
+.def rEXPR = r20
+.def rEXPI = r21
+
+.def rTEMPCL = r22
+.def rTEMPCH = r23
+.def rTEMPDL = r24
+.def rTEMPDH = r25
 
 .def pEVENL = r26
 .def pEVENH = r27
@@ -29,21 +34,10 @@
 
 
 ; arithmetic
-; out
-.def ra16L = r12
-.def ra16H = r13
-.def rb16L = r14
-.def rb16H = r15
 .def rC1 = r12
 .def rC2 = r13
 .def rC3 = r14
 .def rC4 = r15
-
-; in
-.def rA16L = r20
-.def rA16H = r21
-.def rB16L = r22
-.def rB16H = r23
 
 
 ;------------------------------------------------------

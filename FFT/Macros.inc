@@ -58,19 +58,19 @@
 
 
 .MACRO GET_EVEN_R
-	ADD_TO_SUM @0, sEVENR
+	GET_SUMS @0, sEVENR
 .ENDMACRO
 
 .MACRO GET_EVEN_I
-	ADD_TO_SUM @0, sEVENI
+	GET_SUMS @0, sEVENI
 .ENDMACRO
 
 .MACRO GET_ODD_R
-	ADD_TO_SUM @0, sODDR
+	GET_SUMS @0, sODDR
 .ENDMACRO
 
 .MACRO GET_ODD_I
-	ADD_TO_SUM @0, sODDI
+	GET_SUMS @0, sODDI
 .ENDMACRO
 
 .MACRO GET_SUMS ; @0 @1
@@ -79,9 +79,8 @@
 	
 	ldi XL, low(@1)
     ldi XH, high(@1)
-
-	adiw X, 0x01
-
+	
+	; TODO: if int is negative: highest byte must be zero
 	ld @0, X
 	
 	pop XH

@@ -72,27 +72,23 @@ FFT_SUM_LOOP_NOT_EQUAL:
 	;------------------------------------------------------
 	; even real
 	ld rTEMPA, X
-	mov rTEMPB, rEXPR
-	muls rTEMPA, rTEMPB
+	muls rTEMPA, rEXPR
 	ADD_EVEN_R r1
 
 	;------------------------------------------------------
 	; even img
-	mov rTEMPB, rEXPI
-	muls rTEMPA, rTEMPB
+	muls rTEMPA, rEXPI
 	ADD_EVEN_I r1
 	
 	;------------------------------------------------------
 	; odd real
 	ld rTEMPA, Y
-	mov rTEMPB, rEXPR
-	muls rTEMPA, rTEMPB
+	muls rTEMPA, rEXPR
 	ADD_ODD_R r1
 
 	;------------------------------------------------------
 	; odd img
-	mov rTEMPB, rEXPI
-	muls rTEMPA, rTEMPB
+	muls rTEMPA, rEXPI
 	ADD_ODD_I r1
 
 
@@ -132,9 +128,65 @@ FFT_SUM_END:
 	;------------------------------------------------------
 	; multiply exp factor on odd part
 
-	; 
+	; real part
+	GET_ODD_R rTEMPA
+	muls rEXPR, rTEMPA
+	mov r2, r0
+	mov r3, r1
+
+	GET_ODD_I rTEMPA
+	neg rTEMPA
+	muls rEXPI, rTEMPA
+
+	ADD16B r0, r1, r2, r3
+
+	; save
+	mov rTEMPCL, rC1
+	mov rTEMPCH, rC2
+
+	; imag part
+	GET_ODD_I rTEMPA
+	muls rEXPR, rTEMPA
+	mov r2, r0
+	mov r3, r1
+
+	GET_ODD_R rTEMPA
+	muls rEXPI, rTEMPA
+
+	ADD16B r0, r1, r2, r3
+
+	; save
+	mov rTEMPDL, rC1
+	mov rTEMPDH, rC2
 
 
+	;------------------------------------------------------
+	; real part
+
+	GET_EVEN_R rTEMPA
+	EXPLODE8b16b rTEMPA, rTEMPB
+
+	ADD16B rTEMPA, rTEMPB, rTEMPCL, rTEMPCH
+	mov rTEMPCL, rC1
+	mov rTEMPCH, rC2
+
+	MUL16B rTEMPCL, rTEMPCH, rTEMPCL, rTEMPCH
+
+	;------------------------------------------------------
+	; imag part
+
+	GET_EVEN_I rTEMPA
+	EXPLODE8b16b rTEMPA, rTEMPB
+
+	ADD16B rTEMPA, rTEMPB, rTEMPDL, rTEMPDH
+	mov rTEMPA, rC1
+	mov rTEMPB, rC2
+
+	MUL16B rTEMPA, rTEMPB, rTEMPA, rTEMPB
+
+
+	;------------------------------------------------------
+	; hier geht es weiter
 
 
 
