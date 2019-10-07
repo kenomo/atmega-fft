@@ -102,17 +102,31 @@
 	cbi PORTD, 2 ; low
 .ENDMACRO
 
-.MACRO DISPLAY_ROUTINE_PUSH_ON_STACK
+.MACRO DISPLAY_ROUTINE_PUSH_STACK
 	
 	push rTEMPA
 	push rSPI_BUFFER
 	push rROW_COUNTER
 	push rCOLUMN_COUNTER
+	push ZL
+	push ZH
+	push r0
+	push r1
+	
+	in rTEMPA, SREG ; status register
+	push rTEMPA
 
 .ENDMACRO
 
-.MACRO DISPLAY_ROUTINE_POP_FROM_STACK
+.MACRO DISPLAY_ROUTINE_POP_STACK
 
+	pop rTEMPA
+	out SREG, rTEMPA
+
+	pop r1
+	pop r0
+	pop ZH
+	pop ZL
 	pop rCOLUMN_COUNTER
 	pop rROW_COUNTER
 	pop rSPI_BUFFER

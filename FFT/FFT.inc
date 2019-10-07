@@ -1,7 +1,5 @@
 
 FFT:
-	cli ; debug
-
 
 	;------------------------------------------------------
 	; set display pointer to first bin
@@ -263,8 +261,6 @@ FFT_SUM_END:
 	rjmp FFT_BIN_LOOP
 
 FFT_END:
-
-	sei ; debug
 
 	ret
 

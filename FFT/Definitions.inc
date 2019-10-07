@@ -9,7 +9,6 @@
 
 
 ; display routine
-.def rCOUNTER = r18
 .def rSPI_BUFFER = r19
 .def rROW_COUNTER = r20
 .def rCOLUMN_COUNTER = r21

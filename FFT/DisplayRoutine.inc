@@ -2,19 +2,24 @@
 DISPLAY_ROUTINE_TIMER:
 	cli ; global interrupt disable
 
+
+	push rTEMPA
 	ldi rTEMPA, 0x00
 	out TCNT0, rTEMPA ; clear timer compare register
+	pop rTEMPA
 
 
 DISPLAY_ROUTINE:
 	cli ; global interrupt disable
 
-	; for debug purpose
+	DISPLAY_ROUTINE_PUSH_STACK
+
+
+	; for debug purpose -> set PIN PC7 high
 	ldi rTEMPA, (1<<7)
 	out PortC, rTEMPA
-
-	DISPLAY_ROUTINE_PUSH_ON_STACK
 	
+
 	; jump to program position of display routine
 	lds rTEMPA, sLED_PROGRAM
 	cpi rTEMPA, 0x01
@@ -107,10 +112,13 @@ DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER: ; shift register
 
 
 DISPLAY_ROUTINE_END:
-	DISPLAY_ROUTINE_POP_FROM_STACK
 
+	; for debug purpose -> set PIN PC7 low
 	ldi rTEMPA, 0x00
 	out PortC, rTEMPA
+
+
+	DISPLAY_ROUTINE_POP_STACK
 
 	sei ; global interrupt enable
 	reti ; return from interrupt

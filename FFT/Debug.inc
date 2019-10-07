@@ -6,7 +6,7 @@ DISPLAY_ROUTINE_FILL_DEBUG:
 	ldi ZL, low(sLED_ARRAY + LED_ARRAY_SIZE)
     ldi ZH, high(sLED_ARRAY + LED_ARRAY_SIZE)
 
-	ldi rCOUNTER, 128
+	ldi rTEMPA, 128
 	rcall DISPLAY_ROUTINE_FILL_DISPLAY
 
 	; set z pointer to first entry of sLED_ARRAY
@@ -75,10 +75,10 @@ DISPLAY_ROUTINE_FILL_DISPLAY:
 	ldi rTEMPA, 0xFF
 	st -Z, rTEMPA
 
-	dec rCOUNTER
+	dec rTEMPA
 
-	cpi rCOUNTER, 0x00 ; compare register immediate
-	brne DISPLAY_ROUTINE_FILL_DISPLAY ; if rCOUNTER not equal to 0x00 jump to ...
+	cpi rTEMPA, 0x00 ; compare register immediate
+	brne DISPLAY_ROUTINE_FILL_DISPLAY ; if rTEMPA not equal to 0x00 jump to ...
 
 	ret
 
