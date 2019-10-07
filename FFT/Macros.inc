@@ -41,7 +41,7 @@
 
 	mov rTEMPA, @1 ; high byte
 	mov rTEMPB, @0 ; low byte
-	rcall ROUNDTRUNC ; truncate low byte
+	rcall ROUNDTRUNC ; round after truncation of low byte
 	
 	EXPLODE8b16b rTEMPA, rTEMPB
 	ADD16B rTEMPA, rTEMPB, r2, r3
@@ -65,31 +65,30 @@
 
 
 .MACRO GET_EVEN_R
-	GET_SUMS @0, sEVENR
+	GET_SUMS sEVENR
 .ENDMACRO
 
 .MACRO GET_EVEN_I
-	GET_SUMS @0, sEVENI
+	GET_SUMS sEVENI
 .ENDMACRO
 
 .MACRO GET_ODD_R
-	GET_SUMS @0, sODDR
+	GET_SUMS sODDR
 .ENDMACRO
 
 .MACRO GET_ODD_I
-	GET_SUMS @0, sODDI
+	GET_SUMS sODDI
 .ENDMACRO
 
-.MACRO GET_SUMS ; @0 @1
-	push rTEMPA
+.MACRO GET_SUMS
+	push rTEMPB
 		
-	lds @0, @1 ; load highest byte -> division by 2^8
+	lds rTEMPA, @0 ; load high byte
+	lds rTEMPB, @0 + 1 ; load low byte
+
+	rcall ROUNDTRUNC ; round after truncation of low byte
 	
-	mov rTEMPA, @0
-	;rcall ROUNDUPWARDS ; round after division by power of 2
-	mov @0, rTEMPA
-	
-	pop rTEMPA
+	pop rTEMPB
 .ENDMACRO
 
 

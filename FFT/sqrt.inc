@@ -4,7 +4,7 @@
 ;ldi ZL, 0x00
 ;lpm rTEMPA, Z
 
-.org 0x7000 ; will be at address 0x7000 * 2 -> 0xE000
+.org 0x8000
 
 ; sqrt of 0..65535
 sqrt_table:

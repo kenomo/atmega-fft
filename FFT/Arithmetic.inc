@@ -48,13 +48,13 @@ ROUNDTRUNC_END:
 ;------------------------------------------------------
 ; scale 32b -> 16b 
 ;------------------------------------------------------
-; rC4:rC3:rC2:rC1 / 2^2 -> rC2:rC1
-SCALE32B:
+; rC4:rC3:rC2:rC1 / 2^FFT_SCALING_FACTOR -> rC2:rC1
+SCALE32B16B:
     push rTEMPA
 
 	ldi rTEMPA, 0x00
 
-SCALE32B_LOOP:
+SCALE32B16B_LOOP:
 	sbrc rC4, 7 ; skip if bit in register is cleared
 	sec ; set carry flag -> number is negative
 	
@@ -65,7 +65,7 @@ SCALE32B_LOOP:
 
 	inc rTEMPA ; increase loop counter
 	cpi rTEMPA, FFT_SCALING_FACTOR ; compare
-	brne SCALE32B_LOOP ; loop
+	brne SCALE32B16B_LOOP ; loop
 
 	; TODO: check if rC4:rC3 is zero
 

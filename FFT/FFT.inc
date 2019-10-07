@@ -129,12 +129,12 @@ FFT_SUM_LOOP_CONTINUE:
 
 FFT_SUM_END:
 
-/*
+
 	;------------------------------------------------------
 	; load sin and cos from table 1
 
 	; set z pointer to sin_cos table start
-	ldi ZH, high(sin_cos_table_1*2)
+	ldi ZH, high(sin_cos_table_2*2)
 	ldi ZL, 0x00
 
 	; load k <- bin counter
@@ -155,12 +155,12 @@ FFT_SUM_END:
 	; multiply exp factor on odd part
 
 	; real part
-	GET_ODD_R rTEMPA
+	GET_ODD_R
 	muls rEXPR, rTEMPA
 	mov r2, r0
 	mov r3, r1
 
-	GET_ODD_I rTEMPA
+	GET_ODD_I
 	neg rTEMPA
 	muls rEXPI, rTEMPA
 
@@ -170,13 +170,14 @@ FFT_SUM_END:
 	mov rTEMPCL, rC1
 	mov rTEMPCH, rC2
 
+
 	; imag part
-	GET_ODD_I rTEMPA
+	GET_ODD_I
 	muls rEXPR, rTEMPA
 	mov r2, r0
 	mov r3, r1
 
-	GET_ODD_R rTEMPA
+	GET_ODD_R
 	muls rEXPI, rTEMPA
 
 	ADD16B r0, r1, r2, r3
@@ -189,7 +190,7 @@ FFT_SUM_END:
 	;------------------------------------------------------
 	; real part
 
-	GET_EVEN_R rTEMPA
+	GET_EVEN_R
 	EXPLODE8B16B rTEMPA, rTEMPB
 
 	ADD16B rTEMPA, rTEMPB, rTEMPCL, rTEMPCH
@@ -198,7 +199,7 @@ FFT_SUM_END:
 
 	MUL16B rTEMPCL, rTEMPCH, rTEMPCL, rTEMPCH ; square
 
-	rcall SCALE32B ; scale rC4:rC3:rC2:rC1
+	rcall SCALE32B16B ; scale rC4:rC3:rC2:rC1
 	mov rTEMPCL, rC1
 	mov rTEMPCH, rC2
 
@@ -206,7 +207,7 @@ FFT_SUM_END:
 	;------------------------------------------------------
 	; imag part
 
-	GET_EVEN_I rTEMPA
+	GET_EVEN_I
 	EXPLODE8B16B rTEMPA, rTEMPB
 
 	ADD16B rTEMPA, rTEMPB, rTEMPDL, rTEMPDH
@@ -215,7 +216,7 @@ FFT_SUM_END:
 
 	MUL16B rTEMPA, rTEMPB, rTEMPA, rTEMPB ; square
 
-	rcall SCALE32B ; scale rC4:rC3:rC2:rC1
+	rcall SCALE32B16B ; scale rC4:rC3:rC2:rC1
 	mov rTEMPDL, rC1
 	mov rTEMPDH, rC2
 
@@ -232,17 +233,20 @@ FFT_SUM_END:
 	; square root by table
 	
 	; set z pointer to sqrt_table start
-	ldi ZH, high(sqrt_table*2)
+	ldi ZH, 0x00
 	ldi ZL, 0x00
-	 
-	ADD16B ZL, ZH, rTEMPCL, rTEMPCH
-	mov ZH, rC2
-	mov ZL, rC1
-	
-	lpm rTEMPA, Z
-*/
+	ldi rTEMPA, byte3(sqrt_table<<1) ; -> 0x01
+	out RAMPZ, rTEMPA
 
+	add ZL, rTEMPCL
+	adc ZH, rTEMPCH
 	
+	elpm rTEMPA, Z
+
+
+
+
+
 
 	; end of outer bin loop
 	inc rBIN_COUNTER
