@@ -70,9 +70,12 @@ INIT:
 		
 		sLED_ARRAY: .byte LED_ARRAY_SIZE
 		sLED_PROGRAM: .byte 1
-		sLED_Z_POINTER_LOW: .byte 1
-		sLED_Z_POINTER_HIGH: .byte 1
+		sLED_Z_POINTER_L: .byte 1
+		sLED_Z_POINTER_H: .byte 1
 		sLED_ROW_COUNTER: .byte 1
+
+		sFFT_DISPLAY_POINTER_L: .byte 1
+		sFFT_DISPLAY_POINTER_H: .byte 1
 
 		.org 0x0240
 		sFFT_POINTS: .byte FFT_POINT_SIZE
@@ -144,8 +147,8 @@ INIT:
 	; display routine
 	;------------------------------------------------------
 	; initialize row counter
-	ldi rDR_ROW_COUNTER, 0b0000001
-	sts sLED_ROW_COUNTER, rDR_ROW_COUNTER
+	ldi rROW_COUNTER, 0b0000001
+	sts sLED_ROW_COUNTER, rROW_COUNTER
 	
 	; initialize display routine position
 	ldi rTEMPA, 0b0
@@ -157,7 +160,7 @@ INIT:
 	;------------------------------------------------------
 	
 	; for testing
-	rcall DISPLAY_ROUTINE_FILL_DEBUG
+	;rcall DISPLAY_ROUTINE_FILL_DEBUG
 	rcall FFT_FILL_SRAM
 	
 	sei ; global interrupt enable

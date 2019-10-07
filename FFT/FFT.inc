@@ -2,6 +2,16 @@
 FFT:
 	cli ; debug
 
+
+	;------------------------------------------------------
+	; set display pointer to first bin
+	ldi ZL, low(sLED_ARRAY)
+	ldi ZH, high(sLED_ARRAY)
+	adiw ZH:ZL, 0x07
+	sts sFFT_DISPLAY_POINTER_L, ZL
+	sts sFFT_DISPLAY_POINTER_H, ZH
+	
+
 	;------------------------------------------------------
 	; bin loop
 
@@ -30,7 +40,6 @@ FFT_BIN_LOOP_CONTINUE:
 
 	;------------------------------------------------------
 	; clear vars in data segment
-	
 	ldi rTEMPA, 0x00
 	sts sEVENR, rTEMPA
 	sts sEVENR + 0x01, rTEMPA
@@ -244,8 +253,9 @@ FFT_SUM_END:
 	elpm rTEMPA, Z
 
 
-
-
+	;------------------------------------------------------
+	; write result to display
+	rcall FFT_WRITE_TO_DISPLAY
 
 
 	; end of outer bin loop
@@ -255,5 +265,76 @@ FFT_SUM_END:
 FFT_END:
 
 	sei ; debug
+
+	ret
+
+
+FFT_WRITE_TO_DISPLAY:
+
+	lds ZL, sFFT_DISPLAY_POINTER_L
+	lds ZH, sFFT_DISPLAY_POINTER_H
+
+	ldi r20, 0xAA
+	ldi r21, 0xFF
+
+	; turn off the LED
+	cpi rTEMPA, FFT_POWER_8
+	brsh FFT_WRITE_TO_DISPLAY_8
+	st Z, r20
+
+	cpi rTEMPA, FFT_POWER_7
+	brsh FFT_WRITE_TO_DISPLAY_7
+	st -Z, r20
+
+	cpi rTEMPA, FFT_POWER_6
+	brsh FFT_WRITE_TO_DISPLAY_6
+	st -Z, r20
+
+	cpi rTEMPA, FFT_POWER_5
+	brsh FFT_WRITE_TO_DISPLAY_5
+	st -Z, r20
+
+	cpi rTEMPA, FFT_POWER_4
+	brsh FFT_WRITE_TO_DISPLAY_4
+	st -Z, r20
+
+	cpi rTEMPA, FFT_POWER_3
+	brsh FFT_WRITE_TO_DISPLAY_3
+	st -Z, r20
+
+	cpi rTEMPA, FFT_POWER_2
+	brsh FFT_WRITE_TO_DISPLAY_2
+	st -Z, r20
+
+	cpi rTEMPA, FFT_POWER_1
+	brsh FFT_WRITE_TO_DISPLAY_1
+	st -Z, r20
+
+	rjmp FFT_WRITE_TO_DISPLAY_END
+
+	; turn on the LED
+FFT_WRITE_TO_DISPLAY_8:	
+	st Z, r21
+FFT_WRITE_TO_DISPLAY_7:
+	st -Z, r21
+FFT_WRITE_TO_DISPLAY_6:
+	st -Z, r21
+FFT_WRITE_TO_DISPLAY_5:
+	st -Z, r21
+FFT_WRITE_TO_DISPLAY_4:
+	st -Z, r21
+FFT_WRITE_TO_DISPLAY_3:
+	st -Z, r21
+FFT_WRITE_TO_DISPLAY_2:
+	st -Z, r21
+FFT_WRITE_TO_DISPLAY_1:
+	st -Z, r21
+
+FFT_WRITE_TO_DISPLAY_END:
+
+	adiw ZH:ZL, 15
+
+	sts sFFT_DISPLAY_POINTER_L, ZL
+	sts sFFT_DISPLAY_POINTER_H, ZH
 
 	ret

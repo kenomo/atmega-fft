@@ -25,29 +25,29 @@ DISPLAY_ROUTINE:
 	breq DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER
 	
 	
-	lds rDR_ROW_COUNTER, sLED_ROW_COUNTER ; load sLED_ROW_COUNTER from SRAM
+	lds rROW_COUNTER, sLED_ROW_COUNTER ; load sLED_ROW_COUNTER from SRAM
 	
 	; change the row
-	mov rTEMPA, rDR_ROW_COUNTER
+	mov rTEMPA, rROW_COUNTER
 	ror rTEMPA ; shift right into carry flag
-	ror rDR_ROW_COUNTER ; shift right and carry flag in
+	ror rROW_COUNTER ; shift right and carry flag in
 	
 	; write back row counter to SRAM
-	sts sLED_ROW_COUNTER, rDR_ROW_COUNTER
+	sts sLED_ROW_COUNTER, rROW_COUNTER
 	
 	
 	; set z pointer to last entry of LED_ARRAY
 	ldi ZL, low(sLED_ARRAY + LED_ARRAY_SIZE)
     ldi ZH, high(sLED_ARRAY + LED_ARRAY_SIZE)
 
-	; shift z pointer to the row defined as a bit in rDR_ROW_COUNTER: 0b00000100 -> third row
+	; shift z pointer to the row defined as a bit in rROW_COUNTER: 0b00000100 -> third row
 	call DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT
 
 
 DISPLAY_ROUTINE_COLUMNS_B: ; write last 8 columns
 	
 	ldi rSPI_BUFFER, 0x00 ; clear SPI Buffer
-	ldi rDR_COLUMN_COUNTER, 0x01 ; set column counter to first column
+	ldi rCOLUMN_COUNTER, 0x01 ; set column counter to first column
 	rcall DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER
 
 	DISPLAY_ROUTINE_WRITE_Z_POINTER_TO_SRAM
@@ -66,7 +66,7 @@ DISPLAY_ROUTINE_COLUMNS_A: ; write first 8 columns
 	DISPLAY_ROUTINE_READ_Z_POINTER_FROM_SRAM
 
 	ldi rSPI_BUFFER, 0x00 ; clear SPI Buffer
-	ldi rDR_COLUMN_COUNTER, 0x01 ; set column counter to first column
+	ldi rCOLUMN_COUNTER, 0x01 ; set column counter to first column
 	rcall DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER
 	
 	DISPLAY_ROUTINE_WRITE_Z_POINTER_TO_SRAM
@@ -82,19 +82,19 @@ DISPLAY_ROUTINE_COLUMNS_A: ; write first 8 columns
 
 DISPLAY_ROUTINE_ROWS: ; write rows
 
-	; load sLED_ROW_COUNTER again to rDR_ROW_COUNTER
-	lds rDR_ROW_COUNTER, sLED_ROW_COUNTER
+	; load sLED_ROW_COUNTER again to rROW_COUNTER
+	lds rROW_COUNTER, sLED_ROW_COUNTER
 
-	; invert rDR_ROW_COUNTER: 0: row is on, ....
+	; invert rROW_COUNTER: 0: row is on, ....
 	ldi rTEMPA, 0xFF
-	eor rDR_ROW_COUNTER, rTEMPA
+	eor rROW_COUNTER, rTEMPA
 	
 	; set display routine program position
 	ldi rTEMPA, 0x03
 	sts sLED_PROGRAM, rTEMPA
 	
 	; write and end
-	SPI_WRITE rDR_ROW_COUNTER
+	SPI_WRITE rROW_COUNTER
 	rjmp DISPLAY_ROUTINE_END
 
 
@@ -116,15 +116,13 @@ DISPLAY_ROUTINE_END:
 	reti ; return from interrupt
 
 
-
-
 DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT:
 	
-	lsl rDR_ROW_COUNTER ; shift left
-	sbiw ZH:ZL, 1 ; decrease z-pointer by one
+	lsl rROW_COUNTER ; shift left
+	sbiw ZH:ZL, 0x01 ; decrease z-pointer by one
 
-	cpi rDR_ROW_COUNTER, 0x00 ; compare immediate
-	brne DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT ; if rDR_ROW_COUNTER not equal to 0x00 jump to ...
+	cpi rROW_COUNTER, 0x00 ; compare immediate
+	brne DISPLAY_ROUTINE_Z_POINTER_ROW_SHIFT ; if rROW_COUNTER not equal to 0x00 jump to ...
 		
 	ret
 
@@ -134,12 +132,12 @@ DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER:
 	ld rTEMPA, Z ; load "LED bit" from SRAM
 
 	sbrc rTEMPA, 0 ; skip next line if bit 0 in rTEMPA is clear -> LED off
-	eor rSPI_BUFFER, rDR_COLUMN_COUNTER
+	eor rSPI_BUFFER, rCOLUMN_COUNTER
 
 	sbiw ZH:ZL, 8 ; decrease z pointer by 8 bytes
 
-	lsl rDR_COLUMN_COUNTER ; shift left
-	cpi rDR_COLUMN_COUNTER, 0x00 ; compare immediate
+	lsl rCOLUMN_COUNTER ; shift left
+	cpi rCOLUMN_COUNTER, 0x00 ; compare immediate
 	brne DISPLAY_ROUTINE_WRITE_ROW_TO_SPI_BUFFER ; if rCOLUMN_COUNTER not equal to 0x00 jump to ...
 
 	ret

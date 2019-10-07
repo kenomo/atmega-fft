@@ -11,8 +11,8 @@
 ; display routine
 .def rCOUNTER = r18
 .def rSPI_BUFFER = r19
-.def rDR_ROW_COUNTER = r20
-.def rDR_COLUMN_COUNTER = r21
+.def rROW_COUNTER = r20
+.def rCOLUMN_COUNTER = r21
 
 
 ; FFT
@@ -59,6 +59,15 @@
 ; FFT scaling factor
 .equ FFT_SCALING_FACTOR = 2
 
+; FFT vertical bins
+.equ FFT_POWER_8 = 125
+.equ FFT_POWER_7 = 110
+.equ FFT_POWER_6 = 95
+.equ FFT_POWER_5 = 80
+.equ FFT_POWER_4 = 65
+.equ FFT_POWER_3 = 50
+.equ FFT_POWER_2 = 35
+.equ FFT_POWER_1 = 20
 
 
 #endif /* _DEFINITIONS_INC_ */
