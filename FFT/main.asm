@@ -75,14 +75,15 @@ INIT:
 		.org 0x0240
 		sFFT_POINTS: .byte FFT_POINT_SIZE
 		
-		.org 0x0400
+		.org 0x02d0
 		sEVENR: .byte 2
 		sEVENI: .byte 2
 		sODDR: .byte 2
 		sODDI: .byte 2
 
-		sFFT_RES: .byte 16
-
+		.org 0x02e0
+		sDEBUG_SUM: .byte 512 ; debug
+		
 	.cseg ; program memory segment
 
 

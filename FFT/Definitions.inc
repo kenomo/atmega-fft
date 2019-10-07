@@ -17,7 +17,7 @@
 
 ; FFT
 .def rBIN_COUNTER = r18
-.def rM_COUNTER = r19
+.def rSUM_COUNTER = r19
 
 .def rEXPR = r20
 .def rEXPI = r21
@@ -49,5 +49,16 @@
 
 ; size of FFT points
 .equ FFT_POINT_SIZE = 128
+
+; first FFT bin
+.equ FFT_FIRST_BIN = 1
+
+; last FFT bin
+.equ FFT_LAST_BIN = 17
+
+; FFT scaling factor
+.equ FFT_SCALING_FACTOR = 2
+
+
 
 #endif /* _DEFINITIONS_INC_ */

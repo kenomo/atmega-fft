@@ -13,47 +13,54 @@
 ; FFT macros
 ;------------------------------------------------------
 
-.MACRO ADD_EVEN_R
-	ADD_TO_SUM @0, sEVENR
+.MACRO ADD_EVEN_R ; add @1:@0
+	ADD_TO_SUM @0, @1, sEVENR
 .ENDMACRO
 
-.MACRO ADD_EVEN_I
-	ADD_TO_SUM @0, sEVENI
+.MACRO ADD_EVEN_I ; add @1:@0
+	ADD_TO_SUM @0, @1, sEVENI
 .ENDMACRO
 
-.MACRO ADD_ODD_R
-	ADD_TO_SUM @0, sODDR
+.MACRO ADD_ODD_R ; add @1:@0
+	ADD_TO_SUM @0, @1, sODDR
 .ENDMACRO
 
-.MACRO ADD_ODD_I
-	ADD_TO_SUM @0, sODDI
+.MACRO ADD_ODD_I ; add @1:@0
+	ADD_TO_SUM @0, @1, sODDI
 .ENDMACRO
 
-.MACRO ADD_TO_SUM ; @0 @1
-	push XL
-	push XH
+.MACRO ADD_TO_SUM ; add @1:@0, address @2
 	push r2
 	push r3
-	push r4
+	push rTEMPA
+	push rTEMPB
 
-	ldi XL, low(@1)
-    ldi XH, high(@1)
+	; load summand from sram
+	lds r3, @2
+	lds r2, @2 + 1
 
-	ld r3, X+
-	ld r2, X
-
-	mov rTEMPA, @0
+	mov rTEMPA, @1 ; high byte
+	mov rTEMPB, @0 ; low byte
+	rcall ROUNDTRUNC ; truncate low byte
+	
 	EXPLODE8b16b rTEMPA, rTEMPB
 	ADD16B rTEMPA, rTEMPB, r2, r3
 
-	st X, rC1
-	st -X, rC2
+	; store new summand to sram
+	sts @2 + 1, rC1
+	sts @2, rC2
 
-	pop r4
+	/*
+	st Z, rC2 ; debug: sum iterations
+	adiw ZH:ZL, 0x01 ; debug: sum iterations
+	st Z, rC1 ; debug: sum iterations
+	adiw ZH:ZL, 0x01 ; debug: sum iterations
+	*/
+	
+	pop rTEMPB
+	pop rTEMPA
 	pop r3
 	pop r2
-	pop XH
-	pop XL
 .ENDMACRO
 
 
@@ -74,18 +81,18 @@
 .ENDMACRO
 
 .MACRO GET_SUMS ; @0 @1
-	push XL
-	push XH
+	push rTEMPA
+		
+	lds @0, @1 ; load highest byte -> division by 2^8
 	
-	ldi XL, low(@1)
-    ldi XH, high(@1)
+	mov rTEMPA, @0
+	;rcall ROUNDUPWARDS ; round after division by power of 2
+	mov @0, rTEMPA
 	
-	; TODO: if int is negative: highest byte must be zero
-	ld @0, X
-	
-	pop XH
-	pop XL
+	pop rTEMPA
 .ENDMACRO
+
+
 
 ;------------------------------------------------------
 ; display routine
