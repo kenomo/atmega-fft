@@ -1,6 +1,12 @@
 
 FFT:
 
+	/*
+	; debug
+	ldi rTEMPA, 65
+	rcall USART_TRANSMIT
+	*/
+
 	;cli ; debug
 	DEBUG_FFT_START
 
@@ -271,8 +277,17 @@ FFT_SUM_END:
 FFT_END:
 
 	DEBUG_FFT_STOP
-	;sei ; debug
 
+	; restart adc
+	ldi rTEMPA, (1<<ADEN)|(1<<ADATE)|(1<<ADIE)|(1<<ADSC)|(1<<ADPS1)|(1<<ADPS2)
+	; ADEN: ADC Enable
+	; ADATE: ADC Auto Trigger Enable
+	; ADIE: ADC Interrupt Enable
+	; ADSC: ADC Start Conversion
+	; ADPS0, ADPS1: ADC prescaler selection -> 64
+	sts ADCSRA, rTEMPA
+	
+	;sei ; debug
 	ret
 
 

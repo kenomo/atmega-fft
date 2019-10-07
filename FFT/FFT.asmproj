@@ -95,6 +95,9 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ADC.inc">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Arithmetic.inc">
       <SubType>Code</SubType>
     </Compile>
@@ -123,6 +126,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="sin_cos.inc">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="USART.inc">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

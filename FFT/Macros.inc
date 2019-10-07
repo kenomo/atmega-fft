@@ -1,10 +1,97 @@
+;*********************************************************
+;*	BIT access anywhere in IO or lower $FF of data space
+;*	SETB - SET Bit in IO of data space
+;*	CLRB - CLeaR Bit in IO of data space
+;*********************************************************
+
+.MACRO SETB 		;Arguments: Address, Bit, Register
+	.if @1>7
+		.message "Only values 0-7 allowed for Bit parameter"
+	.endif
+	.if @0>0x3F
+		lds  @2, @0
+		sbr  @2, (1<<@1)
+		sts  @0, @2
+	.elif @0>0x1F
+		in   @2, @0
+		sbr  @2, (1<<@1)
+		out  @0, @2
+	.else
+		sbi  @0, @1
+	.endif
+.ENDMACRO
+
+.MACRO CLRB 		;Arguments: Address, Bit, Register
+	.if @1>7
+		.message "Only values 0-7 allowed for Bit parameter"
+	.endif
+	.if @0>0x3F
+		lds  @2, @0
+		cbr  @2, (1<<@1)
+		sts  @0, @2
+	.elif @0>0x1F
+		in   @2, @0
+		cbr  @2, (1<<@1)
+		out  @0, @2
+	.else
+		cbi  @0, @1
+	.endif
+.ENDMACRO
+
+
+
+;*********************************************************
+;*	Bit test anywhere in IO or in lower $FF of data space
+;*  SKBS : SKip if Bit Set
+;*  SKBC : SKip if Bit Cleared
+;*********************************************************
+.MACRO SKBS  		;Arguments: Address, Bit, Register
+	.if @1>7
+		.message "Only values 0-7 allowed for Bit parameter"
+	.endif
+	.if @0>0x3F
+		lds  @2, @0
+		sbrs @2, @1
+	.elif @0>0x1F
+		in   @2, @0
+		sbrs @2, @1
+	.else
+		sbis @0, @1
+	.endif
+.ENDMACRO
+
+.MACRO SKBC  		;Arguments: Address, Bit, Register
+	.if @1>7
+		.message "Only values 0-7 allowed for Bit parameter"
+	.endif
+	.if @0>0x3F
+		lds	 @2, @0
+		sbrc @2, @1
+	.elif @0>0x1F
+		in	 @2, @0
+		sbrc @2, @1
+	.else
+		sbic @0, @1
+	.endif
+.ENDMACRO
+
+
+
 ;------------------------------------------------------
 ; Debug
 ;------------------------------------------------------
+
 .MACRO DEBUG_FFT_START
-	sbi PortC, 6
+	;sbi PortC, 6
 .ENDMACRO
 .MACRO DEBUG_FFT_STOP
+	;cbi PortC, 6
+.ENDMACRO
+
+.MACRO DEBUG_ADC_CONVERSION_START
+	sbi PortC, 6
+.ENDMACRO
+.MACRO DEBUG_ADC_CONVERSION_STOP
 	cbi PortC, 6
 .ENDMACRO
 
@@ -16,12 +103,47 @@
 .ENDMACRO
 
 
+
+;------------------------------------------------------
+; ADC
+;------------------------------------------------------
+.MACRO ADC_PUSH_STACK
+	
+	push rTEMPA
+	push ZL
+	push ZH
+	push r0
+	push r1
+	push rTEMPB
+	
+	in rTEMPA, SREG ; status register
+	push rTEMPA
+
+.ENDMACRO
+
+.MACRO ADC_POP_STACK
+
+	pop rTEMPA
+	out SREG, rTEMPA
+
+	pop rTEMPB
+	pop r1
+	pop r0
+	pop ZH
+	pop ZL
+	pop rTEMPA
+
+.ENDMACRO
+
+
+
 ;------------------------------------------------------
 ; SPI
 ;------------------------------------------------------
 .MACRO SPI_WRITE
 	out SPDR, @0
 .ENDMACRO
+
 
 
 ;------------------------------------------------------
