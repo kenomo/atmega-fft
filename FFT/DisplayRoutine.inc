@@ -12,13 +12,8 @@ DISPLAY_ROUTINE_TIMER:
 DISPLAY_ROUTINE:
 	cli ; global interrupt disable
 
-	DISPLAY_ROUTINE_PUSH_STACK
-
-
-	; for debug purpose -> set PIN PC7 high
-	ldi rTEMPA, (1<<7)
-	out PortC, rTEMPA
-	
+	DEBUG_DR_START
+	DISPLAY_ROUTINE_PUSH_STACK	
 
 	; jump to program position of display routine
 	lds rTEMPA, sLED_PROGRAM
@@ -119,6 +114,7 @@ DISPLAY_ROUTINE_END:
 
 
 	DISPLAY_ROUTINE_POP_STACK
+	DEBUG_DR_STOP
 
 	sei ; global interrupt enable
 	reti ; return from interrupt

@@ -86,8 +86,8 @@ INIT:
 		sODDR: .byte 2
 		sODDI: .byte 2
 
-		.org 0x02e0
-		sDEBUG_SUM: .byte 512 ; debug
+		.org 0x02e0 ; following for debugging
+		sDEBUG_SUM: .byte 512
 		
 	.cseg ; program memory segment
 
@@ -108,11 +108,10 @@ INIT:
 	 * 
 	 */
 
-	; set PBx, PDx, PCx as out
+	; set PBx, PDx as out
 	ldi rTEMPA, 0xFF
 	out DDRB, rTEMPA
 	out DDRD, rTEMPA
-	out DDRC, rTEMPA
 	
 	; set PortB low, set PortD low (except for MR)
 	ldi rTEMPA, 0x00
@@ -162,6 +161,12 @@ INIT:
 	; for testing
 	;rcall DISPLAY_ROUTINE_FILL_DEBUG
 	rcall FFT_FILL_SRAM
+
+	; debug: set pin PC6 and PC7 as output
+	ldi rTEMPA, (1<<6)|(1<<7)
+	out DDRC, rTEMPA
+	ldi rTEMPA, 0x00
+	out PortC, rTEMPA
 	
 	sei ; global interrupt enable
 

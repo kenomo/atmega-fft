@@ -21,17 +21,17 @@
 ;------------------------------------------------------
 ; rTEMPA: high byte
 ; rTEMPB: low byte
+; uses r22 !!!
 ROUNDTRUNC:
-	push r18
 
 	; check if modulo is greater or equal than half of 2^8
 	; for positive numbers -> 0..127
 	; for negative numbers -> 0..128
-	ldi r18, 128
+	ldi r22, 128
 	sbrc rTEMPA, 7
-	ldi r18, 129
+	ldi r22, 129
 
-	sub rTEMPB, r18
+	sub rTEMPB, r22
 	brlo ROUNDTRUNC_END
 
 	ldi rTEMPB, 0x01
@@ -41,7 +41,6 @@ ROUNDTRUNC:
 	ldi rTEMPA, 127 ; -> saturation on overflow
 	
 ROUNDTRUNC_END:
-	pop r18
 	ret
 
 

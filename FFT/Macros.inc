@@ -1,54 +1,66 @@
+;------------------------------------------------------
+; Debug
+;------------------------------------------------------
+.MACRO DEBUG_FFT_START
+	sbi PortC, 6
+.ENDMACRO
+.MACRO DEBUG_FFT_STOP
+	cbi PortC, 6
+.ENDMACRO
+
+.MACRO DEBUG_DR_START
+	sbi PortC, 7
+.ENDMACRO
+.MACRO DEBUG_DR_STOP
+	cbi PortC, 7
+.ENDMACRO
+
 
 ;------------------------------------------------------
 ; SPI
 ;------------------------------------------------------
-
 .MACRO SPI_WRITE
 	out SPDR, @0
 .ENDMACRO
 
 
-
 ;------------------------------------------------------
 ; FFT macros
 ;------------------------------------------------------
-
-.MACRO ADD_EVEN_R ; add @1:@0
-	ADD_TO_SUM @0, @1, sEVENR
+.MACRO ADD_EVEN_R ; add r1:r0
+	ADD_TO_SUM sEVENR
 .ENDMACRO
 
-.MACRO ADD_EVEN_I ; add @1:@0
-	ADD_TO_SUM @0, @1, sEVENI
+.MACRO ADD_EVEN_I ; add r1:r0
+	ADD_TO_SUM sEVENI
 .ENDMACRO
 
-.MACRO ADD_ODD_R ; add @1:@0
-	ADD_TO_SUM @0, @1, sODDR
+.MACRO ADD_ODD_R ; add r1:r0
+	ADD_TO_SUM sODDR
 .ENDMACRO
 
-.MACRO ADD_ODD_I ; add @1:@0
-	ADD_TO_SUM @0, @1, sODDI
+.MACRO ADD_ODD_I ; add r1:r0
+	ADD_TO_SUM sODDI
 .ENDMACRO
 
-.MACRO ADD_TO_SUM ; add @1:@0, address @2
-	push r2
-	push r3
-	push rTEMPA
-	push rTEMPB
-
+.MACRO ADD_TO_SUM ; add r1:r0, address @0
+	
 	; load summand from sram
-	lds r3, @2
-	lds r2, @2 + 1
+	lds r3, @0
+	lds r2, @0 + 1
 
-	mov rTEMPA, @1 ; high byte
-	mov rTEMPB, @0 ; low byte
+	mov rTEMPA, r1 ; high byte
+	mov rTEMPB, r0 ; low byte
 	rcall ROUNDTRUNC ; round after truncation of low byte
 	
 	EXPLODE8b16b rTEMPA, rTEMPB
-	ADD16B rTEMPA, rTEMPB, r2, r3
+
+	add rTEMPA, r2
+	adc rTEMPB, r3 ; TODO: overflow handling
 
 	; store new summand to sram
-	sts @2 + 1, rC1
-	sts @2, rC2
+	sts @0 + 1, rTEMPA
+	sts @0, rTEMPB
 
 	/*
 	st Z, rC2 ; debug: sum iterations
@@ -57,10 +69,6 @@
 	adiw ZH:ZL, 0x01 ; debug: sum iterations
 	*/
 	
-	pop rTEMPB
-	pop rTEMPA
-	pop r3
-	pop r2
 .ENDMACRO
 
 
@@ -80,15 +88,15 @@
 	GET_SUMS sODDI
 .ENDMACRO
 
-.MACRO GET_SUMS
-	push rTEMPB
+.MACRO GET_SUMS ; byte is in rTEMPA
 		
 	lds rTEMPA, @0 ; load high byte
 	lds rTEMPB, @0 + 1 ; load low byte
 
+	push r22
 	rcall ROUNDTRUNC ; round after truncation of low byte
+	pop r22
 	
-	pop rTEMPB
 .ENDMACRO
 
 

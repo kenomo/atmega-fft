@@ -1,6 +1,9 @@
 
 FFT:
 
+	;cli ; debug
+	DEBUG_FFT_START
+
 	;------------------------------------------------------
 	; set display pointer to first bin
 	ldi ZL, low(sLED_ARRAY)
@@ -89,10 +92,12 @@ FFT_SUM_LOOP_CONTINUE:
 	rol r1
 
 	; add offset m*k to Z-Pointer
-	ADD16B r0, r1, ZL, ZH
-	mov ZL, rC1
-	mov ZH, rC2
-	
+	add r0, ZL
+	adc r1, ZH
+	mov ZL, r0
+	mov ZH, r1
+
+	; load from memory
 	lpm rEXPR, Z+ ; sin
 	lpm rEXPI, Z  ; cos
 
@@ -105,23 +110,25 @@ FFT_SUM_LOOP_CONTINUE:
 	; even real
 	ld rTEMPA, X
 	muls rTEMPA, rEXPR
-	ADD_EVEN_R r0, r1
+	ADD_EVEN_R
 
 	;------------------------------------------------------
 	; even img
+	ld rTEMPA, X
 	muls rTEMPA, rEXPI
-	ADD_EVEN_I r0, r1
+	ADD_EVEN_I
 	
 	;------------------------------------------------------
 	; odd real
 	ld rTEMPA, Y
 	muls rTEMPA, rEXPR
-	ADD_ODD_R r0, r1
+	ADD_ODD_R
 
 	;------------------------------------------------------
 	; odd img
+	ld rTEMPA, Y
 	muls rTEMPA, rEXPI
-	ADD_ODD_I r0, r1
+	ADD_ODD_I
 
 
 	;------------------------------------------------------
@@ -150,10 +157,11 @@ FFT_SUM_END:
 	
 	lsl r0 ; multiply by 2
 
-	ADD16B r0, r1, ZL, ZH
-	mov ZL, rC1
-	mov ZH, rC2
-	
+	; add to Z pointer
+	add ZL, r0
+	adc ZH, r1
+
+	; load from program memory
 	lpm rEXPR, Z+ ; sin
 	lpm rEXPI, Z  ; cos
 
@@ -261,6 +269,9 @@ FFT_SUM_END:
 	rjmp FFT_BIN_LOOP
 
 FFT_END:
+
+	DEBUG_FFT_STOP
+	;sei ; debug
 
 	ret
 
