@@ -108,11 +108,6 @@ DISPLAY_ROUTINE_WRITE_SHIFT_REGISTER: ; shift register
 
 DISPLAY_ROUTINE_END:
 
-	; for debug purpose -> set PIN PC7 low
-	ldi rTEMPA, 0x00
-	out PortC, rTEMPA
-
-
 	DISPLAY_ROUTINE_POP_STACK
 	DEBUG_DR_STOP
 

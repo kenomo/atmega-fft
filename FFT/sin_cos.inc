@@ -1,9 +1,5 @@
 .cseg
 
-;ldi ZH, high(sin_cos_table*2)
-;ldi ZL, 0x00
-;lpm rTEMPA, Z
-
 .org 0x2000 ; will be at address 0x2000 * 2 -> 0x4000
 
 ; sin cos of [-4 * pi / 128]*127*[address offset] from 0..15000

@@ -224,8 +224,8 @@ INIT:
 	;rcall DISPLAY_ROUTINE_FILL_DEBUG
 	;rcall FFT_FILL_SRAM
 
-	; debug: set pin PC5, PC6 and PC7 as output
-	ldi rTEMPA, (1<<5)|(1<<6)|(1<<7)
+	; debug: set pin PC6 and PC7 as output
+	ldi rTEMPA, (1<<6)|(1<<7)
 	out DDRC, rTEMPA
 	ldi rTEMPA, 0x00
 	out PortC, rTEMPA

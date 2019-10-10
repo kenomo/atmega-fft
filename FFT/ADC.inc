@@ -14,9 +14,9 @@ ADC_CONVERSION_COMPLETE:
 	subi rTEMPA, 127
 	
 	; scaling
-	ldi rTEMPB, 6
-	muls rTEMPA, rTEMPB
-	mov rTEMPA, r0
+	;ldi rTEMPB, 6
+	;muls rTEMPA, rTEMPB
+	;mov rTEMPA, r0
 
 	; log to usart
 	;rcall USART_TRANSMIT

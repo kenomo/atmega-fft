@@ -286,7 +286,7 @@ FFT_END:
 	; ADSC: ADC Start Conversion
 	; ADPS0, ADPS1: ADC prescaler selection -> 64
 	sts ADCSRA, rTEMPA
-	
+
 	;sei ; debug
 	ret
 

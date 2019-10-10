@@ -1,9 +1,5 @@
 .cseg
 
-;ldi ZH, high(sqrt_table*2)
-;ldi ZL, 0x00
-;lpm rTEMPA, Z
-
 .org 0x8000
 
 ; sqrt of 0..65535
