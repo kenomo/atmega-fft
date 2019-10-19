@@ -36,7 +36,7 @@ DISPLAY_ROUTINE:
 	sts sLED_ROW_COUNTER, rROW_COUNTER
 	
 	
-	; set z pointer to last entry of LED_ARRAY
+	; set z pointer to last entry of sLED_ARRAY
 	ldi ZL, low(sLED_ARRAY + LED_ARRAY_SIZE)
     ldi ZH, high(sLED_ARRAY + LED_ARRAY_SIZE)
 

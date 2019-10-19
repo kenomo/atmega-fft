@@ -1,5 +1,5 @@
 
-/* Enable SPI, Master, set clock rate fck/16 */
+/* enable SPI, set as master, set clock rate fck/16 */
 SPI_MASTER_INIT:
 	; MSTR: set as master
 	; SPI2X: fosc/2
@@ -10,7 +10,7 @@ SPI_MASTER_INIT:
 
 	ret
 
-/* Wait for message transmitted */
+/* wait for message transmitted */
 SPI_WAIT_FOR_TRANSMIT:
 	in rTEMPA, SPSR
 	sbrs rTEMPA, SPIF

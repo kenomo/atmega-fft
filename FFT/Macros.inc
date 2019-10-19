@@ -2,6 +2,7 @@
 ;*	BIT access anywhere in IO or lower $FF of data space
 ;*	SETB - SET Bit in IO of data space
 ;*	CLRB - CLeaR Bit in IO of data space
+; FROM avr001.asm
 ;*********************************************************
 
 .MACRO SETB 		;Arguments: Address, Bit, Register
@@ -44,6 +45,7 @@
 ;*	Bit test anywhere in IO or in lower $FF of data space
 ;*  SKBS : SKip if Bit Set
 ;*  SKBC : SKip if Bit Cleared
+; FROM avr001.asm
 ;*********************************************************
 .MACRO SKBS  		;Arguments: Address, Bit, Register
 	.if @1>7
@@ -82,17 +84,17 @@
 ;------------------------------------------------------
 
 .MACRO DEBUG_FFT_START
-	sbi PortC, 6
+	;sbi PortC, 6
 .ENDMACRO
 .MACRO DEBUG_FFT_STOP
-	cbi PortC, 6
+	;cbi PortC, 6
 .ENDMACRO
 
 .MACRO DEBUG_ADC_CONVERSION_START
-	sbi PortC, 7
+	;sbi PortC, 7
 .ENDMACRO
 .MACRO DEBUG_ADC_CONVERSION_STOP
-	cbi PortC, 7
+	;cbi PortC, 7
 .ENDMACRO
 
 .MACRO DEBUG_DR_START

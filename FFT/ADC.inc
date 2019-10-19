@@ -26,25 +26,12 @@ ADC_CONVERSION_COMPLETE:
 	lds ZL, sADC_SAMPLES_POINTER_L
 	lds ZH, sADC_SAMPLES_POINTER_H
 	st Z+, rTEMPA
-
-
-	/*
-	ldi rTEMPA, 86
-	rcall USART_TRANSMIT
-	*/
-
+	
 
 	; compare
 	cpi ZL, 128
 	brne ADC_CONVERSION_COMPLETE_END
 	
-
-	/*
-	; debug
-	ldi rTEMPA, 78
-	rcall USART_TRANSMIT
-	*/
-
 
 	; stop adc interrupt
 	CLRB ADCSRA, ADIE, rTEMPA

@@ -115,25 +115,25 @@ FFT_SUM_LOOP_CONTINUE:
 	;------------------------------------------------------
 	; even real
 	ld rTEMPA, X
-	muls rTEMPA, rEXPR
+	muls rTEMPA, rEXPR ; Eq. 6: E_k,real
 	ADD_EVEN_R
 
 	;------------------------------------------------------
 	; even img
 	ld rTEMPA, X
-	muls rTEMPA, rEXPI
+	muls rTEMPA, rEXPI  ; Eq. 6: E_k,imag
 	ADD_EVEN_I
 	
 	;------------------------------------------------------
 	; odd real
 	ld rTEMPA, Y
-	muls rTEMPA, rEXPR
+	muls rTEMPA, rEXPR ; Eq. 9: O_k,real
 	ADD_ODD_R
 
 	;------------------------------------------------------
 	; odd img
 	ld rTEMPA, Y
-	muls rTEMPA, rEXPI
+	muls rTEMPA, rEXPI ; Eq. 9: O_k,imag
 	ADD_ODD_I
 
 
@@ -185,7 +185,7 @@ FFT_SUM_END:
 	neg rTEMPA
 	muls rEXPI, rTEMPA
 
-	ADD16B r0, r1, r2, r3
+	ADD16B r0, r1, r2, r3 ; right part of Eq. 12: U_k,real
 
 	; save
 	mov rTEMPCL, rC1
@@ -201,7 +201,7 @@ FFT_SUM_END:
 	GET_ODD_R
 	muls rEXPI, rTEMPA
 
-	ADD16B r0, r1, r2, r3
+	ADD16B r0, r1, r2, r3 ; right part of Eq. 13: U_k,imag
 
 	; save
 	mov rTEMPDL, rC1
@@ -218,7 +218,7 @@ FFT_SUM_END:
 	mov rTEMPCL, rC1
 	mov rTEMPCH, rC2
 
-	MUL16B rTEMPCL, rTEMPCH, rTEMPCL, rTEMPCH ; square
+	MUL16B rTEMPCL, rTEMPCH, rTEMPCL, rTEMPCH ; Eq. 15
 
 	rcall SCALE32B16B ; scale rC4:rC3:rC2:rC1
 	mov rTEMPCL, rC1
@@ -235,7 +235,7 @@ FFT_SUM_END:
 	mov rTEMPA, rC1
 	mov rTEMPB, rC2
 
-	MUL16B rTEMPA, rTEMPB, rTEMPA, rTEMPB ; square
+	MUL16B rTEMPA, rTEMPB, rTEMPA, rTEMPB ; Eq. 16
 
 	rcall SCALE32B16B ; scale rC4:rC3:rC2:rC1
 	mov rTEMPDL, rC1

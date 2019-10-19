@@ -43,7 +43,6 @@ RESET:
 .include "Arithmetic.inc"
 
 .include "SPI.inc"
-.include "Debug.inc"
 
 .include "FFT.inc"
 .include "DisplayRoutine.inc"
@@ -220,10 +219,6 @@ INIT:
 	; misc
 	;------------------------------------------------------
 	
-	; for testing
-	;rcall DISPLAY_ROUTINE_FILL_DEBUG
-	;rcall FFT_FILL_SRAM
-
 	; debug: set pin PC6 and PC7 as output
 	ldi rTEMPA, (1<<6)|(1<<7)
 	out DDRC, rTEMPA
